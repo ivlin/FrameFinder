@@ -34,6 +34,7 @@ def youtube():
         if url_ext.find("/") >= 0:
             url_ext = url_ext[:url_ext.find("/")]
         #print url_ext
+        yt('http://youtube.com/watch?v=%s'%url_ext).streams.filter(subtype='mp4').first().download("./videos",filename=url_ext)
         return redirect(url_for('youtube_results',ext=url_ext,target=file.filename))
 
 '''
@@ -44,7 +45,7 @@ def youtube():
 @app.route("/youtube/<ext>/<target>")
 def youtube_results(ext,target):
     #print('http://youtube.com/watch?v=%s'%ext)
-    yt('http://youtube.com/watch?v=%s'%ext).streams.filter(subtype='mp4').first().download("./videos",filename=ext)
+    #yt('http://youtube.com/watch?v=%s'%ext).streams.filter(subtype='mp4').first().download("./videos",filename=ext)
     os.mkdir("static/out/%s"%ext)
     results = similar_engine.run_extractor("static/in/%s"%(target), "videos/"+ext+".mp4", "static/out/%s"%ext)
     '''
