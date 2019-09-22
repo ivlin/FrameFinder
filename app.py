@@ -20,7 +20,7 @@ def custom_results():
 
 @app.route("/youtube",methods=["POST"])
 def youtube():
-    print request
+    #print request
     file = request.files['target']
     if file.filename == '':
         #print 'No selected file'
