@@ -58,12 +58,30 @@ def youtube_results(ext,target):
 
 @app.route("/clear")
 def clear():
-    shutil.rmtree('static/in')
-    shutil.rmtree('static/out')
-    shutil.rmtree('videos')
-    os.mkdir('static/in')
-    os.mkdir('static/out')
-    os.mkdir('videos')
+    try:
+        shutil.rmtree('static/in')
+    except:
+        pass
+    try:
+        shutil.rmtree('static/out')
+    except:
+        pass
+    try:
+        shutil.rmtree('videos')
+    except:
+        pass
+    try:
+        os.mkdir('static/in')
+        with open('static/in/init','w') as f:
+            f.write('init')
+        os.mkdir('static/out')
+        with open('static/out/init','w') as f:
+            f.write('init')
+        os.mkdir('videos')
+        with open('videos/init','w') as f:
+            f.write('init')
+    except:
+        pass
     return redirect(url_for('index'))
 
 if __name__=="__main__":
