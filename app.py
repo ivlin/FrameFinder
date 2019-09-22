@@ -46,6 +46,9 @@ def youtube():
 def youtube_results(ext,target):
     #print('http://youtube.com/watch?v=%s'%ext)
     yt('http://youtube.com/watch?v=%s'%ext).streams.filter(subtype='mp4').first().download("./videos",filename=ext)
+    os.mkdir("static/out/%s"%ext)
+    results = similar_engine.run_extractor("static/in/%s"%(target), "videos/"+ext+".mp4", "static/out/%s"%ext)
+    '''
     try:
         os.mkdir("static/out/%s"%ext)
         results = similar_engine.run_extractor("static/in/%s"%(target), "videos/"+ext+".mp4", "static/out/%s"%ext)
@@ -54,6 +57,7 @@ def youtube_results(ext,target):
     except:
         with open("static/out/%s/results"%ext,"rb") as f:
             results = pickle.load(f)
+    '''
     return render_template("results.html", youtube_ext=ext, timestamps=results, target=os.path.join('/static/in',target))
 
 @app.route("/clear")
