@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-import os, pickle
+import os, pickle, shutil
 
 import similar_engine
 from pytube import YouTube as yt
@@ -28,7 +28,7 @@ def youtube():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         file = request.files['target']
-        file.save(os.path.join('./static/in/', file.filename))
+        file.save('static/in/'+file.filename)
 
         url_ext = request.form['yt_url']
         url_ext = url_ext[url_ext.find("v=")+2:]
@@ -55,6 +55,14 @@ def youtube_results(ext,target):
         with open("static/out/%s/results"%ext,"rb") as f:
             results = pickle.load(f)
     return render_template("results.html", youtube_ext=ext, timestamps=results, target=os.path.join('/static/in',target))
+
+@app.route("/clear")
+def clear():
+    shutil.rmtree('static/in')
+    shutil.rmtree('static/out')
+    os.mkdir('static/in')
+    os.mkdir('static/out')
+    return redirect(url_for('index'))
 
 if __name__=="__main__":
     app.debug = True
