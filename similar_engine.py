@@ -67,7 +67,7 @@ def run_extractor(target_img, video, path_output_dir, num_results=10):
     for img_ind in xrange(len(top_n_frames)):
         if top_n_frames[img_ind] is None:
             break
-        print ("Rank %d: Frame %s with distance %f"%(img_ind, top_n_frames[img_ind][1], top_n_frames[img_ind][0]))
+        #print ("Rank %d: Frame %s with distance %f"%(img_ind, top_n_frames[img_ind][1], top_n_frames[img_ind][0]))
         cv2.imwrite(os.path.join(path_output_dir, '%s.png'%(top_n_frames[img_ind][1])), top_n_frames[img_ind][3])
         cv2.imwrite(os.path.join(path_output_dir, '%s_proc.png'%(top_n_frames[img_ind][1])), top_n_frames[img_ind][4])
     return top_n_frames

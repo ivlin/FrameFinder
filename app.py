@@ -23,7 +23,7 @@ def youtube():
     print request
     file = request.files['target']
     if file.filename == '':
-        print 'No selected file'
+        #print 'No selected file'
         flash('No selected file')
         return redirect(request.url)
     if file and allowed_file(file.filename):
@@ -34,7 +34,7 @@ def youtube():
         url_ext = url_ext[url_ext.find("v=")+2:]
         if url_ext.find("/") >= 0:
             url_ext = url_ext[:url_ext.find("/")]
-        print url_ext
+        #print url_ext
         return redirect(url_for('youtube_results',ext=url_ext,target=file.filename))
 
 '''
@@ -44,7 +44,7 @@ def youtube():
 '''
 @app.route("/youtube/<ext>/<target>")
 def youtube_results(ext,target):
-    print('http://youtube.com/watch?v=%s'%ext)
+    #print('http://youtube.com/watch?v=%s'%ext)
     yt('http://youtube.com/watch?v=%s'%ext).streams.filter(subtype='mp4').first().download("./videos",filename=ext)
     try:
         os.mkdir("static/out/%s"%ext)
