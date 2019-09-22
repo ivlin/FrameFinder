@@ -5,6 +5,7 @@ import similar_engine
 from pytube import YouTube as yt
 
 app = Flask(__name__)
+app.config.from_object(os.environ["APP_SETTINGS"])
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ['png','jpg','jpeg']
