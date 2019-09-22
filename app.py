@@ -60,8 +60,10 @@ def youtube_results(ext,target):
 def clear():
     shutil.rmtree('static/in')
     shutil.rmtree('static/out')
+    shutil.rmtree('videos')
     os.mkdir('static/in')
     os.mkdir('static/out')
+    os.mkdir('videos')
     return redirect(url_for('index'))
 
 if __name__=="__main__":
