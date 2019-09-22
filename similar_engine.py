@@ -13,7 +13,7 @@ def update_order(ordering, dist, val, name, last_dist, cut_margin=0.005,fps=30):
     if ordering[-1] and dist > ordering[-1][0]:
         return False
     else:
-        for i in xrange(len(ordering)):
+        for i in range(len(ordering)):
             if (ordering[i] is None or ordering[i][0]>dist) and \
                     (last_dist is None or 1.0*abs(last_dist-dist)/last_dist > cut_margin):
                 #cv2.imwrite("candidate.png",~cv2.Canny(val,100,100))
