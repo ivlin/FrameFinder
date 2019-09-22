@@ -24,12 +24,11 @@ def youtube():
     file = request.files['target']
     if file.filename == '':
         #print 'No selected file'
-        flash('No selected file')
-        return redirect(request.url)
+        #flash('No selected file')
+        return redirect(url_for('index'))
     if file and allowed_file(file.filename):
         file = request.files['target']
         file.save('static/in/'+file.filename)
-
         url_ext = request.form['yt_url']
         url_ext = url_ext[url_ext.find("v=")+2:]
         if url_ext.find("/") >= 0:
