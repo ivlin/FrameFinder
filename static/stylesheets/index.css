@@ -1,0 +1,175 @@
+html, body{
+    padding:0;
+    margin:0;
+}
+
+#container{
+    width:100%;
+    font-size:32px;
+    padding: 2%;
+    box-sizing: border-box;
+}
+
+navbar {
+    position:fixed;
+    display:flex;
+    min-height: 20px;
+    max-height:100px;
+    width:100%;
+    position: fixed;
+    text-align: left;
+    font-family:Roboto;
+    font-size: 2em;
+}
+
+navbar, #navbar-spacer{
+    height: 2em;
+    background-color: black;
+    color:white;
+    display:flex;
+    min-height: 20px;
+    max-height:100px;
+    text-align: left;
+    font-family:Roboto;
+    font-size: 2em;
+}
+
+navbar a, navbar a:hover{
+    margin: auto;
+    text-decoration: none;
+    width: 100%;
+    color:white;
+    padding: 0 0.5em;
+}
+
+.set-timer {
+  height:100%;
+}
+
+.collapsible-head{
+  width: 100%;
+  display: flex;
+}
+
+.collapsible{
+    flex:1;
+}
+
+.collapsible:hover, .collapsible:active, .set-timer:hover {
+  background-color: #555;
+}
+
+.collapsible, .set-timer{
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.collapsible-content{
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+.collapsible-content div{
+    display: flex;
+}
+
+.collapsible-content img{
+    box-sizing:border-box;
+    width: 50%;
+}
+
+#main-media{
+        padding: 0;
+        margin: 1em 0;
+        height:360px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+}
+
+#target, #target img{
+  height:100%;
+  max-height:800px;
+  max-width: 100%;
+}
+
+#form-container {
+    box-sizing: border-box;
+    padding:1em;
+    display: flex;
+    flex-direction: column;
+}
+
+#form-container form{
+    box-sizing: border-box;
+    padding:2em;
+    width: 100%;
+    display: flex;
+    height:auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#usage-example{
+    width:75%;
+}
+
+#form-container input[type=text] {
+    font-size: 2.5rem;
+    width: 97.5%;
+    padding:0.5rem;
+}
+
+.btn {
+    background-color: #777;
+    border:none;
+    margin: 1.5rem 0;
+}
+
+.form-group, .btn{
+    width:100%;
+}
+
+hr{
+    width:100%;
+    height:2px;
+}
+
+.custom-file {
+    z-index: -1;
+}
+
+@media only screen and (max-width: 1000px){
+    #main-media{
+        padding: 0;
+        margin: 1em 0;
+        height:auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        width:100%;
+    }
+
+    #player{
+        height:360px;
+    }
+
+    #target, #target img {
+        width:100%;
+        height:auto;
+    }
+
+    #usage-example{
+        width:100%;
+    }
+}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block body %}
+
+    <div id="container">
+        <div id="main-media">
+        <div id="player"></div>
+        <div id="target"><img src="{{target}}"></div>
+        </div>
+        {% for timestamp in timestamps %}
+            <div class="collapsible-head">
+                <button class="collapsible" data-time="{{ timestamp.2 }}"> Similarity Ranking {{ loop.index }} - {{ timestamp.2 }} seconds
+                </button>
+                <a class="set-timer" data-time="{{ timestamp.2 }}"><i class="fas fa-play"></i></a>
+            </div>
+            <div class="collapsible-content">
+                <div>
+                    <img src="/static/out/{{youtube_ext}}/{{ timestamp.1 }}.png">
+                    <img src="/static/out/{{youtube_ext}}/{{ timestamp.1 }}_proc.png">
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+<script>
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          width: document.getElementsByTagName("body")[0].offsetWidth*0.475,
+          videoId: '{{ youtube_ext }}',
+          events: {
+            'onReady': onPlayerReady,
+          }
+        });
+
+        var time_updates = document.getElementsByClassName("set-timer")
+        for (var i=0; i<time_updates.length; i++){
+            time_updates[i].addEventListener("click", function(){
+                player.seekTo(this.dataset.time);
+            });
+        }
+      }
+
+      function onPlayerReady(event) {
+        //event.target.playVideo();
+      }
+      var done = false;
+
+
+      function stopVideo() {
+        player.stopVideo();
+      }
+
+
+    </script>
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.parentElement.nextElementSibling;
+            if (content.style.maxHeight){
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+</script>
+{% endblock %}

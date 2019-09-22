@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block body %}
+
+    <div id="form-container">
+    <form role="form" method="POST" enctype="multipart/form-data" action="youtube">
+        <div class="form-group">
+            <label for="yt_url">Youtube Video URL</label>
+            <input type="url" class="form-control" name="yt_url" id="yt_url" aria-describedby="yt-format" placeholder="Youtube Video">
+            <small id="yt-format" class="form-text text-muted">Please format as ...watch?v=...</small>
+        </div>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" name="target" id="customFile">
+            <label class="custom-file-label" for="target">Choose an image file to represent the target frame</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <hr>
+    <h1>Usage</h1>
+    <ol>
+        <li>Enter the url for the youtube video you want to search. User-uploaded videos will be allowed soon.</li>
+        <li>Select an image that you want to find in the video. This app is more aimed at hand-drawn images.</li>
+        <li>Receive results of which frames look most like your desired image.</li>
+    </ol>
+    <img src="/static/example.png" id="usage-example">
+    <hr>
+    <h1>How it works:</h1>
+    The original intention of this app was to use DeepRanking, a neural network architecture with strong results for ranking image similarity. However, due to time constraints, we we forced to restrict ourselves to simpler methods of comparison - we run OpenCV's Canny Edge detection over every frame, and use distance operations like normalized root mean square of the difference, euclidean distance, and the skimage structural similarity function to determine closeness.
+    <h1>Future Developments</h1>
+    Features
+    <ul>
+        <li> Incorporation of DeepRanking for more accurate image comparison</li>
+        <li> Better UI</li>
+        <li> For the sake of speed and convenience, we do not compare every frame. The default setting is to only use two frames per second. This will hopefully change as we improve the process.</li>
+        <li> Consecutive frames have similar difference indexes from the target image, so frames of the same sequence must be tossed out. Currently, the computer's way of deciding if two frames should be part of the same sequence is unreliable, as is its selection method of which frame should be discarded.</li>
+    </ul>
+    </div>
+    <!--
+    Or submit a file here
+    <form>
+        <input type="file">
+        <input type="submit" value="submit">
+    </form>
+    -->
+{% endblock %}
+
