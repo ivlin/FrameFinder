@@ -47,7 +47,10 @@ def youtube_results(ext,target):
     #print('http://youtube.com/watch?v=%s'%ext)
     #yt('http://youtube.com/watch?v=%s'%ext).streams.filter(subtype='mp4').first().download("./videos",filename=ext)
     os.mkdir("static/out/%s"%ext)
+    app.logger.debug("created out dir")
     results = similar_engine.run_extractor("static/in/%s"%(target), "videos/"+ext+".mp4", "static/out/%s"%ext)
+
+    app.logger.debug("\nframes extracted")
     '''
     try:
         os.mkdir("static/out/%s"%ext)

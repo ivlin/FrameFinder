@@ -61,9 +61,8 @@ def extract_top_frames(video, path_output_dir, target, top_n, pulls_per_second=2
 def run_extractor(target_img, video, path_output_dir, num_results=10):
     target = cv2.imread(target_img)
     target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
-    app.logger.info("\n\ntarget loaded")
     top_n_frames = extract_top_frames(video, "out", target, num_results)
-    app.logger.info("\n frames extracted")
+
     for img_ind in xrange(len(top_n_frames)):
         if top_n_frames[img_ind] is None:
             break
