@@ -78,8 +78,8 @@ def run_extractor(target_img, video, path_output_dir, num_results=10):
     app.logger.debug(target_img)
     app.logger.debug(os.getcwd())
     app.logger.debug(os.listdir("."))
-    app.logger.debug(os.listdir("/"))
-    app.logger.debug(os.listdir("/static/in"))
+    app.logger.debug(os.listdir("./static"))
+    app.logger.debug(os.listdir("./static/in"))
     target = cv2.imread(target_img)
     target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
     top_n_frames = extract_top_frames(video, "out", target, num_results)
@@ -127,7 +127,7 @@ def youtube():
             pass
         app.logger.debug("accessing/static/in/%s"%(file.filename))
         job = q.enqueue_call(func = run_extractor, \
-            args=("/static/in/%s"%(file.filename), "videos/%s.mp4"%url_ext, "static/out/%s"%url_ext))
+            args=("./static/in/%s"%(file.filename), "videos/%s.mp4"%url_ext, "static/out/%s"%url_ext))
         return redirect(url_for("get_results",job_key=job.get_id(),ext=url_ext,target=file.filename))
         #return render_template("wait.html",joburl="http://localhost:8000/results/%s/%s/%s"%(str(job.get_id()), url_ext, file.filename))
         #return redirect(url_for('youtube_results',ext=url_ext,target=file.filename))
