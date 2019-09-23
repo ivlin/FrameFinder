@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os, pickle, shutil
 
-from google.cloud import storage
+import cloudstorage as gcs
+from google.appengine.api import app_identity
 
 import similar_engine
 from pytube import YouTube as yt
@@ -121,11 +122,19 @@ def youtube():
         file.save('static/in/'+file.filename)
         file.save('/tmp/'+file.filename)
 
-        gcs = storage.Client()
-        bucket = gcs.get_bucket("framefinder")
-        blob = bucket.blob(file.filename)
-        blob.upload_from_string(file.read(), content_type=uploaded_file.content_type)
-        app.logger.debug(blob.public_url)
+        bucket_name = 'framefinder'
+
+        write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+        gcs_file = gcs.open(filename,
+                      'w',
+                      content_type='text/plain',
+                      options={'x-goog-meta-foo': 'foo',
+                               'x-goog-meta-bar': 'bar'},
+                      retry_params=write_retry_params)
+        gcs_file.write('abcde\n')
+        gcs_file.write('f'*1024*4 + '\n')
+        gcs_file.close()
+
 
         url_ext = request.form['yt_url']
         url_ext = url_ext[url_ext.find("v=")+2:]
