@@ -33,10 +33,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
 function queryResults() {
-  console.log("{{ joburl }}");
+  console.log(window.location.protocol + window.location.host + "{{ joburl }}");
   $(function() {
     $.ajax({
-      url: window.location.protocol + window.location.host + "{{ joburl }}",
+      url: "/{{ joburl }}",
       type: "POST",
       success: function (response){
           //window.location.replace(response);
