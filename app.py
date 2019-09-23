@@ -47,7 +47,7 @@ def youtube():
         except:
             pass
         job = q.enqueue_call(func = similar_engine.run_extractor, \
-            args=("static/in/%s"%(file.filename), "videos/%s.mp4"%url_ext, "static/out/%s"%url_ext))
+            args=("/static/in/%s"%(file.filename), "videos/%s.mp4"%url_ext, "static/out/%s"%url_ext))
         return redirect(url_for("get_results",job_key=job.get_id(),ext=url_ext,target=file.filename))
         #return render_template("wait.html",joburl="http://localhost:8000/results/%s/%s/%s"%(str(job.get_id()), url_ext, file.filename))
         #return redirect(url_for('youtube_results',ext=url_ext,target=file.filename))
