@@ -78,7 +78,6 @@ def youtube_results(ext,target):
 @app.route("/results/<job_key>/<ext>/<target>",methods=["GET","POST"])
 def get_results(job_key,ext,target):
     app.logger.info("fetching")
-    print "sdasd"
     if request.method=="GET":
         job = Job.fetch(job_key, connection=conn)
         if job.is_finished:
