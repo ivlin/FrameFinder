@@ -77,7 +77,15 @@ def extract_top_frames(video, path_output_dir, target, top_n, pulls_per_second=2
     vidcap.release()
     return ordering
 
-def run_extractor(target_img, video, path_output_dir, num_results=10):
+def run_extractor(target_img, vid_ext, path_output_dir, num_results=10):
+    #image
+    target = cv2.cvtColor(target_img, cv2.COLOR_BGR2GRAY)
+    top_n_frames = extract_top_frames(video, "out", target, num_results)
+
+    #video
+    yt('http://youtube.com/watch?v=%s'%vid_ext).streams.filter(subtype='mp4').first().download("./videos",filename=vid_ext)
+
+    #debug
     app.logger.debug(target_img)
     app.logger.debug(os.getcwd())
     app.logger.debug(os.listdir("."))
@@ -85,10 +93,6 @@ def run_extractor(target_img, video, path_output_dir, num_results=10):
     app.logger.debug(os.listdir("./static/in"))
     app.logger.debug(os.listdir("./videos"))
     app.logger.debug(os.listdir("/tmp"))
-
-    target = cv2.imread(target_img)
-    target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
-    top_n_frames = extract_top_frames(video, "out", target, num_results)
 
     for img_ind in range(len(top_n_frames)):
         if top_n_frames[img_ind] is None:
@@ -120,36 +124,22 @@ def youtube():
     if file and allowed_file(file.filename):
         file = request.files['target']
         file.save('static/in/'+file.filename)
-        file.save('/tmp/'+file.filename)
-
-        bucket_name = 'framefinder'
-
-        write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-        gcs_file = gcs.open(filename,
-                      'w',
-                      content_type='text/plain',
-                      options={'x-goog-meta-foo': 'foo',
-                               'x-goog-meta-bar': 'bar'},
-                      retry_params=write_retry_params)
-        gcs_file.write('abcde\n')
-        gcs_file.write('f'*1024*4 + '\n')
-        gcs_file.close()
-
 
         url_ext = request.form['yt_url']
         url_ext = url_ext[url_ext.find("v=")+2:]
         if url_ext.find("/") >= 0:
             url_ext = url_ext[:url_ext.find("/")]
 
-        #print url_ext
-        yt('http://youtube.com/watch?v=%s'%url_ext).streams.filter(subtype='mp4').first().download("./videos",filename=url_ext)
         try:
             os.mkdir("static/out/%s"%url_ext)
         except:
             pass
         app.logger.debug("accessing/static/in/%s"%(file.filename))
-        job = q.enqueue_call(func = run_extractor, \
-            args=("./static/in/%s"%(file.filename), "videos/%s.mp4"%url_ext, "static/out/%s"%url_ext))
+
+        target_img=cv2.imread('static/in/'+file.filename)
+
+        job = q.enqueue_call(func = similar_engine.run_extractor, \
+            args=(target_img, url_ext, "static/out/%s"%url_ext))
         return redirect(url_for("get_results",job_key=job.get_id(),ext=url_ext,target=file.filename))
         #return render_template("wait.html",joburl="http://localhost:8000/results/%s/%s/%s"%(str(job.get_id()), url_ext, file.filename))
         #return redirect(url_for('youtube_results',ext=url_ext,target=file.filename))

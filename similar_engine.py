@@ -22,12 +22,17 @@ def update_order(ordering, dist, val, name, last_dist, cut_margin=0.005,fps=30):
                 return True
         return False
 
+def load_video(vid_ext):
+    yt('http://youtube.com/watch?v=%s'%vid_ext).streams.filter(subtype='mp4').first().download("./videos",filename=vid_ext)
+    return "./videos/"+vid_ext
 
 #https://stackoverflow.com/questions/30136257/how-to-get-image-from-video-using-opencv-python
-def extract_top_frames(video, path_output_dir, target, top_n, pulls_per_second=2):
+def extract_top_frames(video_ext, path_output_dir, target, top_n, pulls_per_second=2):
     ordering=[None]*top_n
 
-    vidcap = cv2.VideoCapture(video)
+    #print (video_ext)
+
+    vidcap = cv2.VideoCapture(video_ext)
     fps = vidcap.get(cv2.CAP_PROP_FPS);
 
     cur_frame = 0
@@ -58,10 +63,10 @@ def extract_top_frames(video, path_output_dir, target, top_n, pulls_per_second=2
     vidcap.release()
     return ordering
 
-def run_extractor(target_img, video, path_output_dir, num_results=10):
-    target = cv2.imread(target_img)
-    target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
-    top_n_frames = extract_top_frames(video, "out", target, num_results)
+def run_extractor(target_img, vid_ext, path_output_dir, num_results=10):
+    #image
+    target = cv2.cvtColor(target_img, cv2.COLOR_BGR2GRAY)
+    top_n_frames = extract_top_frames(vid_ext, "out", target, num_results)
 
     for img_ind in range(len(top_n_frames)):
         if top_n_frames[img_ind] is None:
@@ -70,6 +75,5 @@ def run_extractor(target_img, video, path_output_dir, num_results=10):
         cv2.imwrite(os.path.join(path_output_dir, '%s.png'%(top_n_frames[img_ind][1])), top_n_frames[img_ind][3])
         cv2.imwrite(os.path.join(path_output_dir, '%s_proc.png'%(top_n_frames[img_ind][1])), top_n_frames[img_ind][4])
     return top_n_frames
-
 if __name__=="__main__":
     run_extractor("out/target1.jpg","stance.mp4","out")
