@@ -80,7 +80,7 @@ def run_extractor(target_img, video, path_output_dir, num_results=10):
     app.logger.debug(os.listdir("."))
     app.logger.debug(os.listdir("./static"))
     app.logger.debug(os.listdir("./static/in"))
-    app.logger.debug(os.listdir("./tmp"))
+    app.logger.debug(os.listdir("/tmp"))
     target = cv2.imread(target_img)
     target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
     top_n_frames = extract_top_frames(video, "out", target, num_results)
