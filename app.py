@@ -82,6 +82,7 @@ def get_results(job_key,ext,target):
         else:
             return render_template("wait.html",joburl="results/%s/%s/%s"%(str(job.get_id()), ext, target))
     else:
+        app.logger.debug("fetching")
         job = Job.fetch(job_key, connection=conn)
         if job.is_finished:
             app.logger.debug("loaded")

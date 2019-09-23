@@ -63,7 +63,7 @@ def run_extractor(target_img, video, path_output_dir, num_results=10):
     target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
     top_n_frames = extract_top_frames(video, "out", target, num_results)
 
-    for img_ind in xrange(len(top_n_frames)):
+    for img_ind in range(len(top_n_frames)):
         if top_n_frames[img_ind] is None:
             break
         #print ("Rank %d: Frame %s with distance %f"%(img_ind, top_n_frames[img_ind][1], top_n_frames[img_ind][0]))
