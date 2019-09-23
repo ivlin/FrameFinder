@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os, pickle, shutil
 
-import cloudstorage as gcs
-from google.appengine.api import app_identity
+#from google.appengine.api import app_identity
+#import cloudstorage as gcs
 
 import similar_engine
 from pytube import YouTube as yt
