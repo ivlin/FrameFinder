@@ -36,7 +36,7 @@ function queryResults() {
   console.log("{{ joburl }}");
   $(function() {
     $.ajax({
-      url: "http://localhost:8000/{{ joburl }}",
+      url: window.location.protocol + window.location.host + "{{ joburl }}",
       type: "POST",
       success: function (response){
           //window.location.replace(response);
