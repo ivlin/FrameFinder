@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os, pickle, shutil
 
+from google.cloud import storage
+
 import similar_engine
 from pytube import YouTube as yt
 
@@ -80,7 +82,9 @@ def run_extractor(target_img, video, path_output_dir, num_results=10):
     app.logger.debug(os.listdir("."))
     app.logger.debug(os.listdir("./static"))
     app.logger.debug(os.listdir("./static/in"))
+    app.logger.debug(os.listdir("./videos"))
     app.logger.debug(os.listdir("/tmp"))
+
     target = cv2.imread(target_img)
     target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
     top_n_frames = extract_top_frames(video, "out", target, num_results)
@@ -116,6 +120,13 @@ def youtube():
         file = request.files['target']
         file.save('static/in/'+file.filename)
         file.save('/tmp/'+file.filename)
+
+        gcs = storage.Client()
+        bucket = gcs.get_bucket("framefinder")
+        blob = bucket.blob(file.filename)
+        blob.upload_from_string(file.read(), content_type=uploaded_file.content_type)
+        app.logger.debug(blob.public_url)
+
         url_ext = request.form['yt_url']
         url_ext = url_ext[url_ext.find("v=")+2:]
         if url_ext.find("/") >= 0:
