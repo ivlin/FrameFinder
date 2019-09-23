@@ -1,11 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os, pickle, shutil
 
 import similar_engine
 from pytube import YouTube as yt
 
+from rq import Queue
+from rq.job import Job
+from worker import conn
+
 app = Flask(__name__)
 app.config.from_object(os.environ["APP_SETTINGS"])
+
+q=Queue(connection=conn)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ['png','jpg','jpeg']
@@ -33,9 +39,17 @@ def youtube():
         url_ext = url_ext[url_ext.find("v=")+2:]
         if url_ext.find("/") >= 0:
             url_ext = url_ext[:url_ext.find("/")]
+
         #print url_ext
         yt('http://youtube.com/watch?v=%s'%url_ext).streams.filter(subtype='mp4').first().download("./videos",filename=url_ext)
-        return redirect(url_for('youtube_results',ext=url_ext,target=file.filename))
+
+        os.mkdir("static/out/%s"%url_ext)
+        job = q.enqueue_call(func = similar_engine.run_extractor, \
+            args=("static/in/%s"%(file.filename), "videos/%s.mp4"%url_ext, "static/out/%s"%url_ext))
+        return redirect(url_for("get_results",job_key=job.get_id(),ext=url_ext,target=file.filename))
+        #return render_template("wait.html",joburl="http://localhost:8000/results/%s/%s/%s"%(str(job.get_id()), url_ext, file.filename))
+        #return redirect(url_for('youtube_results',ext=url_ext,target=file.filename))
+
 
 '''
 |- static - contains served images including the original image
@@ -44,14 +58,11 @@ def youtube():
 '''
 @app.route("/youtube/<ext>/<target>")
 def youtube_results(ext,target):
-    #print('http://youtube.com/watch?v=%s'%ext)
-    #yt('http://youtube.com/watch?v=%s'%ext).streams.filter(subtype='mp4').first().download("./videos",filename=ext)
-    os.mkdir("static/out/%s"%ext)
-    app.logger.debug("created out dir")
-    results = similar_engine.run_extractor("static/in/%s"%(target), "videos/"+ext+".mp4", "static/out/%s"%ext)
+    yt('http://youtube.com/watch?v=%s'%ext).streams.filter(subtype='mp4').first().download("./videos",filename=ext)
 
+    results = similar_engine.run_extractor("static/in/%s"%(target), "videos/"+ext+".mp4", "static/out/%s"%ext)
     app.logger.debug("\nframes extracted")
-    '''
+
     try:
         os.mkdir("static/out/%s"%ext)
         results = similar_engine.run_extractor("static/in/%s"%(target), "videos/"+ext+".mp4", "static/out/%s"%ext)
@@ -60,11 +71,24 @@ def youtube_results(ext,target):
     except:
         with open("static/out/%s/results"%ext,"rb") as f:
             results = pickle.load(f)
-    '''
     return render_template("results.html", youtube_ext=ext, timestamps=results, target=os.path.join('/static/in',target))
 
-@app.route("/clear")
-def clear():
+@app.route("/results/<job_key>/<ext>/<target>",methods=["GET","POST"])
+def get_results(job_key,ext,target):
+    if request.method=="GET":
+        job = Job.fetch(job_key, connection=conn)
+        if job.is_finished:
+            return render_template("results.html", youtube_ext=ext, timestamps=job.result, target=os.path.join('/static/in',target))
+        else:
+            return render_template("wait.html",joburl="results/%s/%s/%s"%(str(job.get_id()), ext, target))
+    else:
+        job = Job.fetch(job_key, connection=conn)
+        if job.is_finished:
+            return {}, 200
+        else:
+            return {}, 404
+
+def clear_code():
     try:
         shutil.rmtree('static/in')
     except:
@@ -89,6 +113,10 @@ def clear():
             f.write('init')
     except:
         pass
+
+@app.route("/clear")
+def clear():
+    clear_code()
     return redirect(url_for('index'))
 
 if __name__=="__main__":
