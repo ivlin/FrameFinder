@@ -42,8 +42,10 @@ def youtube():
 
         #print url_ext
         yt('http://youtube.com/watch?v=%s'%url_ext).streams.filter(subtype='mp4').first().download("./videos",filename=url_ext)
-
-        os.mkdir("static/out/%s"%url_ext)
+        try:
+            os.mkdir("static/out/%s"%url_ext)
+        except:
+            pass
         job = q.enqueue_call(func = similar_engine.run_extractor, \
             args=("static/in/%s"%(file.filename), "videos/%s.mp4"%url_ext, "static/out/%s"%url_ext))
         return redirect(url_for("get_results",job_key=job.get_id(),ext=url_ext,target=file.filename))
@@ -75,6 +77,8 @@ def youtube_results(ext,target):
 
 @app.route("/results/<job_key>/<ext>/<target>",methods=["GET","POST"])
 def get_results(job_key,ext,target):
+    app.logger.info("fetching")
+    print "sdasd"
     if request.method=="GET":
         job = Job.fetch(job_key, connection=conn)
         if job.is_finished:
@@ -82,7 +86,6 @@ def get_results(job_key,ext,target):
         else:
             return render_template("wait.html",joburl="results/%s/%s/%s"%(str(job.get_id()), ext, target))
     else:
-        app.logger.debug("fetching")
         job = Job.fetch(job_key, connection=conn)
         if job.is_finished:
             app.logger.debug("loaded")
