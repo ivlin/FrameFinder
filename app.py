@@ -46,6 +46,7 @@ def youtube():
             os.mkdir("static/out/%s"%url_ext)
         except:
             pass
+        app.logger.debug("accessing/static/in/%s"%(file.filename))
         job = q.enqueue_call(func = similar_engine.run_extractor, \
             args=("/static/in/%s"%(file.filename), "videos/%s.mp4"%url_ext, "static/out/%s"%url_ext))
         return redirect(url_for("get_results",job_key=job.get_id(),ext=url_ext,target=file.filename))
