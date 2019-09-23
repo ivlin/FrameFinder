@@ -84,8 +84,10 @@ def get_results(job_key,ext,target):
     else:
         job = Job.fetch(job_key, connection=conn)
         if job.is_finished:
+            app.logger.debug("loaded")
             return {}, 200
         else:
+            app.logger.debug("not loaded")
             return {}, 404
 
 def clear_code():
