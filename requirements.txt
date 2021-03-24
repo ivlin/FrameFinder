@@ -48,7 +48,7 @@ PyWavelets==1.0.3
 redis==3.3.8
 requests==2.22.0
 rq==1.1.0
-rsa==4.0
+rsa==4.1
 scikit-image==0.14.5
 scipy==1.2.2
 six==1.12.0
