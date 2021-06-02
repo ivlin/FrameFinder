@@ -54,6 +54,6 @@ scipy==1.2.2
 six==1.12.0
 subprocess32==3.5.4
 termcolor==1.1.0
-urllib3==1.25.5
+urllib3==1.26.5
 Werkzeug==0.16.0
 wrapt==1.11.2
